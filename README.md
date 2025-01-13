@@ -8,6 +8,6 @@ git clone https://github.com/harvard-ml-courses/cs181-s25-homeworks.git
 
 and then run `git pull` to fetch the most recent updates. You can also click the green `Code` button and then `Download ZIP`.
 
-[See the course schedule here.](https://docs.google.com/spreadsheets/d/1IjW90adj4vMRlKM8rmJFmF433ZnougpkZWx62JOIlgo/edit?gid=1863065080#gid=1863065080)
+[See the course schedule here.](https://docs.google.com/spreadsheets/d/1IjW90adj4vMRlKM8rmJFmF433ZnougpkZWx62JOIlgo)
 
 Please request clarifications through [our Ed discussion board]() under the corresponding label.
