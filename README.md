@@ -10,4 +10,4 @@ and then run `git pull` to fetch the most recent updates. You can also click the
 
 [See the course schedule here.](https://docs.google.com/spreadsheets/d/1IjW90adj4vMRlKM8rmJFmF433ZnougpkZWx62JOIlgo)
 
-Please request clarifications through [our Ed discussion board]() under the corresponding label.
+Please request clarifications through [our Ed discussion board](https://edstem.org/us/courses/74317/discussion) under the corresponding label.
