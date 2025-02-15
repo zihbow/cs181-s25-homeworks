@@ -1,16 +1,13 @@
-\documentclass[submit]{harvardml}
+\documentclass[submit]{../harvardml}
 
-% Solutions flag
-\newif\ifisSolution
-\isSolutiontrue
+\course{CS1810-S25}
+\assignment{Homework \#2}
+\duedate{February 28, 2025 at 11:59 PM}
 
-\course{CS181-S25}
-\assignment{Assignment \#2}
-\duedate{11:59pm EST, Feb 28th, 2025}
-
+\usepackage{../common}
 \usepackage[OT1]{fontenc}
 \usepackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
-\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
 \usepackage{subfig}
 \usepackage{fullpage}
 \usepackage{amsmath}
@@ -20,10 +17,11 @@
 \usepackage{soul}
 \usepackage{todonotes}
 \usepackage{listings}
-\usepackage{../common}
 \usepackage{enumitem}
 \usepackage{bm}
 \usepackage{bbm}
+
+
 \newcommand{\B}{\text{B}}
 \newcommand{\Beta}{\text{Beta}}
 
@@ -37,18 +35,22 @@
   framerule=0pt,
   basicstyle=\ttfamily,
   columns=fullflexible}}{}
+  
 
-% Solution environment
-\newenvironment{solution}
-  {\color{blue}\section*{Solution}}
-{}
-% \excludecomment{solution} % UNCOMMENT TO HIDE SOLUTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Solution environment
+\usepackage{xcolor}
+\newenvironment{solution}{
+    \vspace{2mm}
+    \color{blue}\noindent\textbf{Solution}:
+}{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \begin{document}
 
 \begin{center}
-  {\Large Homework 2: Classification and Bias-Variance Trade-offs}\\
+  {\Large Classification and Bias-Variance Trade-offs}\\
 \end{center}
 
 \subsection*{Introduction}
@@ -200,7 +202,7 @@ times when we are likely to detect the planet.
 % Problem 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{problem}[Maximum likelihood in classification, 15pts]
+\begin{problem}[Maximum likelihood in classification]
 
 Consider now a generative $K$-class model.  We adopt class prior
 $p(\boldy = C_k; \bpi) = \pi_k$ for all $k \in \{1, \ldots, K\}$
@@ -282,7 +284,7 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{problem}[Classifying Loan Applicants]
-In this problem, you will code up three different classifiers to classify different types of loan applicants. The file \verb|data/hr.csv| contains data on debt to income ratio (measured as a fraction) and credit score. The data can be plotted on these two axes:
+In this problem, you will code up three different classifiers to classify different types of loan applicants. The file \verb|data/hr.csv| contains data on debt to income ratio measured in tenths of a percent and credit score. The data can be plotted on these two axes:
 \begin{center}
   \includegraphics[width=.5\textwidth]{img_input/credit.png}
 \end{center}
