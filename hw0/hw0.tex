@@ -81,7 +81,81 @@ In this class, we will be exploring the question of ``how do we model the trend 
 
 
 \begin{solution}
-	Your solution here.
+	\begin{itemize}
+        \item[1] Plugging in our respective values for $x_1,y_1$ and $x_2,y_2,$ we have the following systems: 
+        $$y_1 = w_0 + w_1x_1 \quad y_2 = w_0 + w_1x_2.$$
+        To solve this system of equations, we can first utilize elimination to isolate $w_1$:
+        $$y_2 - y_1 = w_1(x_2 - x_1) \implies w_1 = \frac{y_2 - y_1}{x_2 - x_1}.$$
+        Then to solve for $w_0$, we can substitute $w_1$ back into one of the equations:
+        $$y_1 = w_0 + w_1x_1 \implies w_0 = y_1 - w_1x_1 = y_1 - \frac{y_2 - y_1}{x_2 - x_1}x_1 = \frac{y_1(x_2 - x_1) - x_1(y_2-y_1)}{x_2 - x_1} = \frac{y_1x_2 - y_2x_1}{x_2 - x_1}$$
+        \item[2] To express it in matrix form, note that we still want to preserve 
+        $$y_1 = w_0 + w_1x_1 \quad y_2 = w_0 + w_1x_2.$$
+        The $w_0$ is constant, and the $w_1$ is being multiplied by $x_1$ and $x_2.$ Thus, we can express this as 
+       $$
+        \begin{bmatrix}
+            y_1 \\
+            y_2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            x_1 & 1 \\
+            x_2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+            w_1 \\
+            w_0
+        \end{bmatrix}.
+        $$
+        which preserves our two equations, and yields the system of equations as seen above.
+        \item[3] Note that for a solution for the matrix $\mathbf{w}$ to exist, the matrix $\mathbf{X}$ must be invertible. This is contingent on the fact that the determinant of $\mathbf{X}$ is non-zero, meaning that $x_1 - x_2 neq 0 \implies x_1 \neq x_2.$ This makes sense because if $x_1 = x_2,$ then either we have that both points in the set are the same point (in which case we would have infinite solutions), or we have two different $y$ values for the same $x$ value, which would mean that our function is undefined with a vertical slope.
+        \item[4] Computing $\mathbf{w},$ we have that 
+        \item[] $$
+        \begin{bmatrix}
+            y_1 \\
+            y_2
+        \end{bmatrix}
+        =
+        \begin{bmatrix}
+            x_1 & 1 \\
+            x_2 & 1
+        \end{bmatrix}
+        \begin{bmatrix}
+            w_1 \\
+            w_0
+        \end{bmatrix}.
+        $$
+        implies that 
+        $$\begin{bmatrix}
+            w_1 \\
+            w_0
+        \end{bmatrix} = 
+        \begin{bmatrix}
+            x_1 & 1 \\
+            x_2 & 1
+        \end{bmatrix}^{-1}
+        \begin{bmatrix}
+            y_1 \\
+            y_2
+        \end{bmatrix} 
+        = 
+        \begin{bmatrix}
+            \frac{1}{x_1 - x_2} & -\frac{1}{x_1 - x_2} \\
+            -\frac{x_2}{x_1 - x_2} & \frac{x_1}{x_1 - x_2}
+        \end{bmatrix}
+        \begin{bmatrix}
+            y_1 \\
+            y_2
+        \end{bmatrix} 
+        =
+        \begin{bmatrix}
+            \frac{y_1}{x_1 - x_2} - \frac{y_2}{x_1 - x_2} \\
+            -\frac{y_1x_2}{x_1 - x_2} + \frac{y_2x_1}{x_1 - x_2}
+        \end{bmatrix}
+        $$
+        which lines up with our calculations in part 1. It's good to use this model with matrix notation because it's scalable to more points (which doesn't matter as much for a line) and makes higher dimension questions easier to solve. 
+        \item[5] Not necessarily, because the dimensions of the matrices would change. The determinant of the matrix involving all of the $x$ values would be significantly messier, so it doesn't really make sense to use this expression when $\mathcal{D}$ consists of more than two points.
+     \end{itemize}
+    
 \end{solution}
 
 \color{black}
@@ -116,7 +190,16 @@ $$y = f(x_1, x_2) = \exp\left(-(x_1 - 2)^2 - (x_2 - 1)^2 \right)$$
 
 
 \begin{solution}
-	Your solution here.
+    \begin{itemize}
+        \item[1] From the plot, we can see that there does exist a maximum height at a point when $x$ is positive.
+        Since this is a parabola, this maximum is the vertex of the parabola, which is a unique point.
+        \item[2] To optimize the height of the plant, we can take the derivative of the height function to find a local maximum. Note that 
+        $$\frac{dy}{dx} = -6x + 72.$$
+        Setting this equal to zero, we find that the local maximum is at $x = 12$. Substituting this value back into the height function, we find that her plant can grow to a maximum height of $y = 70 + 72(12) - 3(12)^2 = 334$ mm.
+        \item[3] We can see that there appears to be a global maximum at $x_1 = 2$ and $x_2 = 1,$ but calculus would be required to confirm this. 
+    \end{itemize}
+
+	
 \end{solution}
 
 \newpage 
@@ -162,7 +245,31 @@ In this class, one of our main focuses is to model the unexpected variations in 
 \newpage
 
 \begin{solution}
-	Your solution here.
+	\begin{itemize}
+        \item[1. (a)] A Gaussian distribution would not be appropriate for modeling the size and weight of packages because the Gaussian distribution has a chance of assigning negative values to the size and weight of packages, which is stupid. Furthermore, size and weight are related somehow, so it's highly unlikely that they both follow random distributions.
+        \item[1. (b)] As seen in our Jupyter notebook, we get really close to the theoretical means for both $S$ and $W.$
+        \item[2.] The two are clearly correlated, because a higher value of $S$ yields a consistently higher value of $W.$ 
+        \item[3.] Using linearity of expectation, we have that 
+        \begin{align*}
+        \textrm{E}[T] &= \textrm{E}[60 + 0.6W + 0.2S + \epsilon] \\
+        & = 60 + 0.6\textrm{E}[W] + 0.2\textrm{E}[S] + \textrm{E}[\epsilon] \\
+        &= 60 + 0.6(4) + 0.2(120) + 0 \\
+        &= 120.
+        \end{align*}
+        Then to find the variance, we have that 
+        \begin{align*}
+        \textrm{Var}[T] &= \textrm{Var}[60 + 0.6W + 0.2S + \epsilon] \\
+        &= 0.6^2\textrm{Var}[W] + 0.2^2\textrm{Var}[S] + \textrm{Var}[\epsilon] \\
+        &= 0.6^2(1.5) + 0.2^2(1.5) + 5 \\
+        &= 1.35 + 0.06 + 5 \\
+        &= 6.41.
+        \end{align*}
+        \item[4.] Since the size and the weight of each package is independent of all other packages, there is a set probability of whether or not a package is considered "fragile". Thus, the distribution of the number of fragile packages is binomial, with $n$ being the total number of packages that arrive today and $p$ being the probability that a package is fragile. Furthermore, since the weight of a package is normal with mean $4,$ we have that $p = 0.5.$ \par
+        The PMF of the distribution of the number of fragile packages that arrive today is given by
+        $$P(X = k) = \binom{n}{k}(0.5)^n.$$
+        \item[5.] On the Jupyter notebook.
+    \end{itemize}
+
 \end{solution} 
 
 \newpage 
@@ -198,7 +305,14 @@ In this class, we will bridge theory and practice through implementing the metho
 \end{problem}
 
 \begin{solution}
-	Your solution here.
+	\begin{itemize}
+        \item[1] There does appear to be a linear trend in the data!
+        \item[2] The issue here is that hstack will stacks the array horizontally, and both arrays are one dimensional(shape $(n, )$), so the original code would combine them into one long array (shape $(2n,)$). Instead, we want to reshape so that they are both $(n, 1)$ arrays in two dimensions. 
+        $y.shape = (100, 1)$ and $X.shape = (100, 2).$ There is no second coordinate in the output for $y.shape$ because it is a one-dimensional array.
+        \item[3] The shape of $\bm{\hat w}$ should be $(2, 1),$ with an intercept and a slope.
+        \item[4] The issues we have here are the following: we have to use @ instead of * for matrix multiplication, we have to use the inverse function for a matrix instead of **{-1}, and we have to include self in the predict function.
+        \item[5] On the jupyter notebook.
+    \end{itemize}
 \end{solution}
 
 \end{document}

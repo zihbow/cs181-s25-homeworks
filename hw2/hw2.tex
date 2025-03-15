@@ -195,7 +195,27 @@ times when we are likely to detect the planet.
 \newpage
 
 \begin{solution}
-	Your solution here.
+	\begin{itemize}
+    \item[2.] We have the following:
+    \begin{center}
+      \includegraphics[width=0.5\textwidth]{img_output/basis1.png}
+      \includegraphics[width=0.5\textwidth]{img_output/basis2.png}
+      \includegraphics[width=0.5\textwidth]{img_output/basis3.png}
+    \end{center}
+    Note that as we go from basis1 to basis3, the curves get progressive more crazy while adhering to the curve itself better (bias going down while variance goes up). We can also watch the progression from underfit to overfit by observing the mean of learned models - the mean of the learned models almost has the sinusoidal shape of the true process in basis3, but there are many more fluctuations in the curve. \par
+    Basis1 is pretty trash, with wild underfitting, and basis2 is a tiny bit better but also quite bad. 
+    \item[3)] We implement this, and we see that the bias plateaus while the variance continues to decrease. This makes sense since we're trying to use multiple polynomial functions to approximate a sinusoidal function, so there's a fundamental issue with trying to predict a sinusoidal function using a polynomial basis. \item[4)] We have the following:
+    \begin{itemize}
+      \item[$t=0.1:$] $p = 0.49926,$ variance $= 0.0027834$
+      \item[$t=3.2:$] $p = 0.99999,$ variance $= 0.249999$
+      \item[] 
+    \end{itemize}
+    For $t=0.1$, probability is $0.5$, which means that the model still very uncertain (equally likely to predict 0 or 1). The variance is very low, meaning that models are all quite similar and agree on the prediction. \par
+    For $t=3.2$, probability is $1$, which means that the model is very certain that the planet will be observed. However, the variance is relatively higher, meaning that models are quite different and disagree on the prediction.\par
+    \item[5)] To identify the ideal time, I would use the basis3 model. It's better to have low bias and high variance, since you can continually add data in order to decrease the variance, but decreasing bias is very difficult if your model is fundamentally flawed. I would request at time $t=3.2$ since it showed the highest probability of observation. \par
+    If we got a new telescope, we can still use our approach, but we would have to train on different data.\par
+    Comparing the observations from the other telescope, we can see that there's no clear sinusoidal wave because everything is rather uniformly spread on 1 and 0 so there is no clear decision boundary. It wouldn't be reasonable to refit my models on the data because the polynomial fit would either result in underfitting with high bias, or extreme overfitting because the data is so sporadic. 
+  \end{itemize}
 \end{solution}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,7 +297,88 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 \newpage
 
 \begin{solution}
-	Your solution here.
+	\begin{itemize}
+    \item[1.] First, we identify the likelihood function as the product of $p(\boldx_i, \boldy_i \mid \mathbf{\pi})$ over all $i$: we are given that the data are independent, so we can express this as a product:
+    \begin{align*}
+    p(D;\bpi) &= \prod_{i=1}^n p(\boldx_i, \boldy_i; \bpi) \\
+    &= \prod_{i=1}^n p(\boldx_i | \boldy_i) p(\boldy_i; \bpi) \\
+    &= \prod_{i=1}^n \prod_{k=1}^K p(\boldx_i | \boldy = C_k)^{I(\boldy_i = C_k)} p(\boldy_i = C_k;\bpi) \\
+    &= \prod_{i=1}^n \prod_{k=1}^K p(\boldx_i | \boldy = C_k)^{I(\boldy_i = C_k)} \pi_k \\
+    \end{align*}
+    Then, we take the log of the likelihood function to get
+    $$
+    \ln p(D;\bpi) = \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \ln p(\boldx_i | \boldy = C_k) + \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \ln \pi_k.
+    $$
+    \item[2.] Using the hint from below, we want to optimize the log-likelihood function subject to the constraint $\sum_k \pi_k - 1 = 0$. We can do this by constructing the Lagrangian function:
+    $$
+    L(\bpi, \lambda) = \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \ln p(\boldx_i | \boldy = C_k) + \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \ln \pi_k + \lambda \left(\sum_{k=1}^K \pi_k - 1\right).
+    $$
+    Taking the derivative of $L$ with respect to $\pi_k$ and setting it to zero, we get
+    $$
+    \frac{\partial L}{\partial \pi_k} = \sum_{i=1}^n I(\boldy_i = C_k) \frac{1}{\pi_k} + \lambda = 0.
+    $$
+    Solving for $\pi_k$, we get
+    $$
+    \hat{\pi}_k = -\frac{1}{\lambda} \sum_{i=1}^n I(\boldy_i = C_k).
+    $$
+    Note that we must have the sum of all $\pi_k$ equal to 1, so we can substitute $\lambda = -n$ t get 
+    $$
+    \hat{\pi}_k = \frac{1}{n} \sum_{i=1}^n I(\boldy_i = C_k).
+    $$
+    This is intuitive because the maximum likelihood estimator for the prior class-membership probabilities is the proportion of data points that belong to class $C_k$.
+    \item[3.] We start by writing the log-likelihood function as
+    $$
+    \ln p(D; \bmu, \bSigma) = \sum_{i=1}^n \ln p(\boldx_i | \boldy_i; \bmu, \bSigma) + \ln p(\boldy_i; \bpi).
+    $$
+    Note that we can express
+    $$
+    \ln p(\boldx_i | \boldy_i; \bmu, \bSigma) = \ln \mathcal{N}(\boldx_i | \bmu_k, \bSigma) = -\frac{1}{2} \ln |\bSigma| - \frac{1}{2} (\boldx_i - \bmu_k)^\top \bSigma^{-1} (\boldx_i - \bmu_k).
+    $$
+    We can then take the gradient of the log-likelihood with respect to $\bmu_k$ (while ignoring constants like $|\Sigma|$) to get
+    $$
+    \nabla_{\bmu_k} \ln p(D; \bmu, \bSigma) = -\sum_{i=1}^n I(\boldy_i = C_k) \nabla_{\bmu_k} \left( \frac{1}{2} (\boldx_i - \bmu_k)^\top \bSigma^{-1} (\boldx_i - \bmu_k)\right).
+    $$
+
+    Taking the gradient, we get
+    $$
+    \nabla_{\bmu_k} \ln p(D; \bmu, \bSigma) = \sum_{i=1}^n I(\boldy_i = C_k) \bSigma^{-1} (\boldx_i - \bmu_k).
+    $$
+    \item[4.] To find the maximum likelihood estimator $\widehat{\bmu_k}$, we set the gradient equal to zero 
+    $$
+    \sum_{i=1}^n I(\boldy_i = C_k) \bSigma^{-1} (\boldx_i - \widehat{\bmu_k}) = 0.
+    $$
+    $$
+    \widehat{\bmu_k} = \frac{\sum_{i=1}^n I(\boldy_i = C_k) \boldx_i}{\sum_{i=1}^n I(\boldy_i = C_k)}.
+    $$
+    This makes sense because the MLE is just the mean for each class $k$.
+    \item[5.] First, write the log-likelihood 
+    $$
+    \ln p(D; \bmu, \bSigma) = \sum_{i=1}^n \ln p(\boldx_i | \boldy_i; \bmu, \bSigma) + \ln p(\boldy_i; \bpi).
+    $$
+    We can express
+    $$
+    \ln p(\boldx_i | \boldy_i; \bmu, \bSigma) = \ln \mathcal{N}(\boldx_i | \bmu_k, \bSigma) = -\frac{1}{2} \ln |\bSigma| - \frac{1}{2} (\boldx_i - \bmu_k)^\top \bSigma^{-1} (\boldx_i - \bmu_k).
+    $$
+    We can then take the gradient of the log-likelihood with respect to $\bSigma$ (while ignoring constants like $|\Sigma|$) to get
+    $$
+    \nabla_{\bSigma} \ln p(D; \bmu, \bSigma) = -\frac{1}{2} \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \nabla_{\bSigma} \left( (\boldx_i - \bmu_k)^\top \bSigma^{-1} (\boldx_i - \bmu_k)\right).
+    $$
+    Taking the gradient, we get
+    $$
+    \nabla_{\bSigma} \ln p(D; \bmu, \bSigma) = -\frac{1}{2} \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \left( \bSigma^{-1} - \bSigma^{-1} (\boldx_i - \bmu_k) (\boldx_i - \bmu_k)^\top \bSigma^{-1}\right).
+    $$
+    \item[6.] To find the maximum likelihood estimator $\widehat{\bSigma}$, we set the gradient equal to zero
+    $$
+    -\frac{1}{2} \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) \left( \bSigma^{-1} - \bSigma^{-1} (\boldx_i - \widehat{\bmu_k}) (\boldx_i - \widehat{\bmu_k})^\top \bSigma^{-1}\right) = 0.
+    $$
+    $$
+    \widehat{\bSigma} = \frac{1}{n} \sum_{i=1}^n \sum_{k=1}^K I(\boldy_i = C_k) (\boldx_i - \widehat{\bmu_k}) (\boldx_i - \widehat{\bmu_k})^\top.
+    $$
+    
+    
+
+    
+  \end{itemize}
 \end{solution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problem 3
@@ -360,17 +461,36 @@ After implementing the above classifiers, complete the following exercises:
 \newpage
 
 \begin{solution}
-	Your solution here.
+  \begin{itemize}
+  \item[1)] Implementation is in the Python notebook. 
+  \begin{center}
+    \includegraphics[width=0.45\textwidth]{img_output/Gaussian_Generative_Model_(shared_covariance).png}
+    \includegraphics[width=0.45\textwidth]{img_output/Gaussian_Generative_Model.png}
+    \includegraphics[width=0.45\textwidth]{img_output/softmax.png}
+    \includegraphics[width=0.45\textwidth]{img_output/softmaxtr.png}
+    \includegraphics[width=0.45\textwidth]{img_output/KNN1.png}
+    \includegraphics[width=0.45\textwidth]{img_output/KNN5.png}
+  \end{center}
+  From top to bottom, note that when covariance is shared, our decision boundaries are linear. When covariance is separate for each class, the decision boundaries are quadratic. \par
+  The softmax regression without transformed features has linear boundaries, which makes sense because of the setup of softmax. However, our transformation basis is not linear, which results in nonlinear decision boundaries for the transformed features softmax regression. \par
+  The kNN classifier with $k=1$ and $k=5$ both have very interesting boundaries, but their shapes are roughly the same. You can see traces of overfitting between the automatically rejected and automatically accepted regions, with every single point in our training data being classified correctly. \par
+  \item[2.] Implementation is in the Python Notebook: we have that every model classifies this individual as 0 (rejected) except for softmax regression with transformed features, which classifies the individual as 1 (requires guarantor). \par 
+  The probabilities are as follows:
+  Softmax regression: $[1.00000000e+00, 9.93305871e-24, 4.05542149e-34]$\par
+  Softmax regression with transformed features: $[2.16186498e-01, 7.83763958e-01, 4.95440650e-05]$ \par
+  We can see that the softmax regression is very confident, but softmax regression with transformed features is only ~80\% confident. When a piece of data is far from the training data, we are making extrapolations that are not really backed by any confidence. This is especially true for the softmax regression with transformed features, which is not as confident as the other models (since it uses non-linear decision boundaries). \par
+  \item[3.] An ethical problem here is that a high debt-to-income ratio is very multi-dimensional. For example, someone who just graduated college might have a lot of debt and a relatively low income, yet they are more trustworthy than someone who might have no debt because they are always getting helped by others, yet also have no income so essentially no way of paying back the loan. A classifier with only two parameters cannot reasonably predict something with as many confounding variables as loan trustworthiness. \par
+  In addition to credit score + debt-to-income ratio, we can also consider things like net worth, current career average salary, as well as averages over the past few years to get a better idea of the applicant's current financial situation. 
+  \end{itemize}
 \end{solution}
-
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Name and Calibration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 
-\textbf{Name}:
+\textbf{Name}: Zihongbo Wang
 
-\textbf{Collaborators and Resources}: 
+\textbf{Collaborators and Resources}: Ossimi Ziv, Ryan Jiang, and the CS181 Textbook (as well as a youtube video about trolls 2 that clarified naive bayes)
 
 \end{document}
